@@ -1,15 +1,16 @@
-/*
- * File:            Minecraft.java 
- * Author:          Annie Wu, Aatena Hasan 
+/**
+ * File:            Block.java 
+ * Team:            Depressed Dinos
+ * @author:        Annie Wu, Aatena Hasan 
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            8 March 2019
+ * Date:            6 April 2019 
  *                  
- * Purpose:         Checkpoint 1 - display a cube in 3D space with each face a different
- *                  color
+ * Purpose:         
  *                  
  */
+
 
 import java.nio.FloatBuffer;
 import java.util.Random;
@@ -21,11 +22,11 @@ public class Chunk {
     
     static final int CHUNK_SIZE = 30;
     static final int CUBE_LENGTH = 2;
-    private Block[][][] Blocks;
+    private final Block[][][] Blocks;
     private int VBOVertexHandle;
     private int VBOColorHandle;
-    private int StartX, StartY, StartZ;
-    private Random r;
+    private final int StartX, StartY, StartZ;
+    private final Random r;
     
     public Chunk(int startX, int startY, int startZ) {
         r = new Random();
@@ -75,7 +76,7 @@ public class Chunk {
             
     }
     
-    public void rebuildMesh(float startX, float startY, float startZ) {
+    public final void rebuildMesh(float startX, float startY, float startZ) {
         VBOColorHandle = glGenBuffers();
         VBOVertexHandle = glGenBuffers();
         FloatBuffer VertexPositionData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);

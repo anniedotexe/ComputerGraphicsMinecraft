@@ -1,13 +1,13 @@
-/*
+/**
  * File:            Minecraft.java 
- * Author:          Annie Wu, Aatena Hasan 
+ * Team:            Depressed Dinos
+ * @author:         Annie Wu, Aatena Hasan
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            8 March 2019
+ * Date:            6 April 2019 
  *                  
- * Purpose:         Checkpoint 1 - display a cube in 3D space with each face a different
- *                  color
+ * Purpose:         Main method that creates a window and initializes the graphics.
  *                  
  */
 

@@ -1,14 +1,17 @@
-/*
- * File:            CameraController.java 
- * Author:          Annie Wu, Aatena Hasan 
+/**
+ * File:            Block.java 
+ * Team:            Depressed Dinos
+ * @author:         Annie Wu, Aatena Hasan
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            8 March 2019
+ * Date:            6 April 2019 
  *                  
- * Purpose:         Camera Controller
+ * Purpose:         This class acts as the camera for the user to view the world. 
  *                  
  */
+
+
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -35,8 +38,6 @@ public class CameraController {
     
     public CameraController (float x, float y, float z) {
         
-       // location = new Chunk((int)x, (int)y, (int)z);
-
         //instantiate position of Camera to x y z parameters
         position = new Camera(x, y, z);
         lPosition = new Camera(x, y, z);
@@ -136,8 +137,8 @@ public class CameraController {
     }
     
     /*
-    Method: 
-    Purpose: 
+    Method: gameLoop
+    Purpose: main loop for running the program 
     */
     public void gameLoop() {
         location = new Chunk(0, 0, 0);
@@ -151,7 +152,6 @@ public class CameraController {
         float mouseSensitivity= 0.09f;
         float movementSpeed= .35f;
         
-               
         //hide the mouse
         Mouse.setGrabbed(true);
         

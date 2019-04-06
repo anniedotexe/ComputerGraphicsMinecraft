@@ -1,13 +1,13 @@
 /**
  * File:            Block.java 
  * Team:            Depressed Dinos
- * @author:        Annie Wu, Aatena Hasan 
+ * @author:         Annie Wu, Aatena Hasan
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
  * Date:            6 April 2019 
  *                  
- * Purpose:         
+ * Purpose:         This class creates chunks of blocks.
  *                  
  */
 

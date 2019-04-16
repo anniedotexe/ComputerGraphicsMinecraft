@@ -1,12 +1,13 @@
-/*
+/**
  * File:            CameraController.java 
+ * Team:            Depressed Dinos
  * Author:          Annie Wu, Aatena Hasan 
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
  * Date:            8 March 2019
  *                  
- * Purpose:         Camera Controller
+ * Purpose:         Camera Controller.
  *                  
  */
 import org.lwjgl.util.vector.Vector3f;

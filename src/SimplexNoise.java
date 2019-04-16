@@ -1,7 +1,7 @@
 /**
  * File:            Block.java 
  * Team:            Depressed Dinos
- * @author:         Annie Wu, Aatena Hasan
+ * Author:          Annie Wu, Aatena Hasan 
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 

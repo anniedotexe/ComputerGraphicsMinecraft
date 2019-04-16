@@ -1,5 +1,5 @@
 /**
- * File:            Block.java 
+ * File:            SimplexNoise.java 
  * Team:            Depressed Dinos
  * Author:          Annie Wu, Aatena Hasan 
  * Class:           CS 4450 - Computer Graphics

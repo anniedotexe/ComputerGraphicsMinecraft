@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            8 March 2019
+ * Date:            18 April 2019 
  *                  
  * Purpose:         Block Information. 
  *                  
@@ -43,7 +43,7 @@ public class Block {
     
     public Block(BlockType type) {
         Type = type;
-
+        isActive = false;
     }
 
     public void setCoords(float x, float y, float z) {
@@ -64,4 +64,8 @@ public class Block {
         return Type.getID();
     }
 
+    public void setID(BlockType type) {
+        Type = type;
+    }
+    
 }

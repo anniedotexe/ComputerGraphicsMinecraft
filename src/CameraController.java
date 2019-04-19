@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            8 March 2019
+ * Date:            18 April 2019 
  *                  
  * Purpose:         Camera Controller.
  *                  
@@ -34,10 +34,15 @@ public class CameraController {
     
     private Camera me;
     
+    /**
+     * Constructor: CameraController
+     * Purpose: Create camera controller at this position  
+     * @param x
+     * @param y
+     * @param z 
+     */
     public CameraController (float x, float y, float z) {
         
-       // location = new Chunk((int)x, (int)y, (int)z);
-
         //instantiate position of Camera to x y z parameters
         position = new Camera(x, y, z);
         lPosition = new Camera(x, y, z);
@@ -47,37 +52,41 @@ public class CameraController {
        
     }
     
-    /*
-    Method: yaw 
-    Purpose: increment current yaw rotation by amount
+    /**
+     * Method: yaw
+     * Purpose: Increment current yaw rotation by amount
+    * @param amount
     */
     public void yaw (float amount) {
         yaw += amount;
     }
     
-    /*
-    Method: pitch 
-    Purpose: increment pitch by amount
-    */
+    /**
+     * Method: pitch 
+     * Purpose: increment pitch by amount
+     * @param amount 
+     */
     public void pitch (float amount) {
         pitch -= amount;
     }
     
-    /*
-    Method: walkForward 
-    Purpose: move camera forward relative to current rotation (yaw) 
-    */
+    /**
+     * Method: walkForward 
+     * Purpose: Move camera forward relative to current rotation (yaw) 
+     * @param distance 
+     */
     public void walkForward (float distance) {
         float xOffset = distance * (float)Math.sin(Math.toRadians(yaw));
         float zOffset= distance * (float)Math.cos(Math.toRadians(yaw));
         position.x -= xOffset;
         position.z += zOffset;
     }
-    
-    /*
-    Method: walkBackward 
-    Purpose: move camera backward relative to current rotation (yaw) 
-    */
+        
+    /**
+     * Method: walkBackward 
+     * Purpose: Move camera backward relative to current rotation (yaw) 
+     * @param distance 
+     */
     public void walkBackwards (float distance) {
         float xOffset= distance * (float) Math.sin(Math.toRadians(yaw));
         float zOffset= distance * (float) Math.cos(Math.toRadians(yaw));
@@ -85,10 +94,11 @@ public class CameraController {
         position.z -= zOffset;
     }
     
-    /*
-    Method: strafeLeft
-    Purpose: strafe camera to the left relative to current rotation (yaw)
-    */
+    /**
+     * Method: strafeLeft
+     * Purpose: Strafe camera to the left relative to current rotation (yaw)
+     * @param distance 
+     */
     public void strafeLeft(float distance) {
         float xOffset= distance * (float) Math.sin(Math.toRadians(yaw - 90));
         float zOffset= distance * (float) Math.cos(Math.toRadians(yaw - 90));
@@ -96,37 +106,40 @@ public class CameraController {
         position.z += zOffset;
     }
     
-    /*
-    Method: strafeRight
-    Purpose: strafe camera to the right relative to current rotation (yaw)
-    */
+    /**
+     * Method: strafeRight
+     * Purpose: Strafe camera to the right relative to current rotation (yaw)
+     * @param distance 
+     */
     public void strafeRight(float distance) {
         float xOffset= distance * (float)Math.sin(Math.toRadians(yaw+90));
         float zOffset= distance * (float)Math.cos(Math.toRadians(yaw+90));
         position.x -= xOffset;
         position.z += zOffset;
     }
-    
-    /*
-    Method: moveUp
-    Purpose: move camera up
-    */
+
+    /**
+     * Method: moveUp
+     * Purpose: Move camera up
+     * @param distance 
+     */
     public void moveUp(float distance) {
         position.y -= distance;
     }
-    
-    /*
-    Method: moveDown
-    Purpose: move camera down
-    */
+
+    /**
+     * Method: moveDown
+     * Purpose: Move camera down
+     * @param distance 
+     */
     public void moveDown(float distance) {
         position.y += distance;
     }
     
-    /*
-    Method: lookThrough
-    Purpose: this does basically what gluLookAt() does
-    */
+    /**
+     * Method: lookThrough
+     * Purpose: This does basically what gluLookAt() does
+     */
     public void lookThrough() {
         //roatate the pitch around the X axis
         glRotatef(pitch, 1.0f, 0.0f, 0.0f);
@@ -137,8 +150,8 @@ public class CameraController {
     }
     
     /*
-    Method: 
-    Purpose: 
+    Method: gameLoop
+    Purpose: Main loop for running the program 
     */
     public void gameLoop() {
         location = new Chunk(0, 0, 0);
@@ -206,7 +219,7 @@ public class CameraController {
     
     /*
     Method: render
-    Purpose: render what we want to draw 
+    Purpose: Render what we want to draw 
     */
     private void render() {
         try {

@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            8 March 2019
+ * Date:            18 April 2019 
  *                  
  * Purpose:         Create a window and initialize the graphics. 
  *                  
@@ -24,28 +24,28 @@ public class Minecraft {
     
     private DisplayMode displayMode;
 
-    /*
-    Method: start
-    Purpose: run the methods we need to draw with OpenGL
-    */
+    /**
+     * Method: start
+     * Purpose: Run the methods we need to draw with OpenGL
+     */
     public void start() {
-        //initialize our instance of our camera controller inside start method
         
+        //initialize our instance of our camera controller inside start method
         try {
             CameraController cam = new CameraController(0f,0f,0f);
             createWindow();
             initGL();
            
-            cam.gameLoop();//render();
+            cam.gameLoop(); //render();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     
-    /*
-    Method: createWindow
-    Purpose: create a 640x840 window
-    */
+    /**
+     * Method: createWindow
+     * Purpose: Create a 640x840 window
+     */
     private void createWindow() throws Exception {
         Display.setFullscreen(false);
         DisplayMode d[] = Display.getAvailableDisplayModes();
@@ -60,10 +60,10 @@ public class Minecraft {
         Display.create();
     }
     
-    /*
-    Method: initGL
-    Purpose: initialize the graphics
-    */
+    /**
+     * Method: initGL
+     * Purpose: Initialize the graphics
+     */
     private void initGL() {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glMatrixMode(GL_PROJECTION);

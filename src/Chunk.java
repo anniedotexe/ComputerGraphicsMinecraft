@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            8 March 2019
+ * Date:            18 April 2019 
  *                  
  * Purpose:         Create chunks of blocks.
  *                  
@@ -27,6 +27,14 @@ public class Chunk {
     private int StartX, StartY, StartZ;
     private Random r;
     
+    
+    /**
+     * Constructor: Chunk 
+     * Purpose: Create a chunk of blocks and randomly add textures to each cube 
+     * @param startX
+     * @param startY
+     * @param startZ 
+     */
     public Chunk(int startX, int startY, int startZ) {
         r = new Random();
         Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
@@ -62,10 +70,12 @@ public class Chunk {
     }
 
 
-    
+    /**
+     * Method: render
+     * Purpose: Render the graphics
+     */
     public void render() {
         glPushMatrix();
-            //glPushMatrix();
             glBindBuffer(GL_ARRAY_BUFFER, VBOVertexHandle);
             glVertexPointer(3, GL_FLOAT, 0, 0L);
             glBindBuffer(GL_ARRAY_BUFFER, VBOColorHandle);
@@ -75,6 +85,13 @@ public class Chunk {
             
     }
     
+    /**
+     * Method: rebuildMesh 
+     * Purpose: Create hills and valleys (variations in terrain) with SimplexNoise
+     * @param startX
+     * @param startY
+     * @param startZ 
+     */
     public void rebuildMesh(float startX, float startY, float startZ) {
         VBOColorHandle = glGenBuffers();
         VBOVertexHandle = glGenBuffers();
@@ -111,6 +128,12 @@ public class Chunk {
         
     }
     
+    /**
+     * Method: createCubeVertexCol 
+     * Purpose: Create cube vertex col
+     * @param CubeColorArray
+     * @return 
+     */
     private float[] createCubeVertexCol(float[] CubeColorArray) {
         float[] cubeColors = new float[CubeColorArray.length * 4* 6];
         for(int i = 0; i < cubeColors.length; i++) {
@@ -119,6 +142,14 @@ public class Chunk {
         return cubeColors;
     }
     
+    /**
+     * Method: createCube 
+     * Purpose: Create a cube 
+     * @param x
+     * @param y
+     * @param z
+     * @return 
+     */
     public static float[] createCube(float x, float y, float z) {
         int offset = CUBE_LENGTH / 2;
         return new float[] {
@@ -156,6 +187,12 @@ public class Chunk {
                    
     }
     
+    /**
+     * Method: getCubeColor 
+     * Purpose: Get the cube color 
+     * @param block
+     * @return 
+     */
     private float[] getCubeColor(Block block) {
         switch(block.getID()) {
             case 1:
@@ -170,4 +207,4 @@ public class Chunk {
                 
     }
 
-} //end chunk class
+}

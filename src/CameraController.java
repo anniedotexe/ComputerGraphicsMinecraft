@@ -5,9 +5,9 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            18 April 2019 
+ * Date:            20 April 2019 
  *                  
- * Purpose:         Camera Controller.
+ * Purpose:         3D vector to store camera position.
  *                  
  */
 import org.lwjgl.util.vector.Vector3f;
@@ -15,41 +15,33 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
+import java.nio.FloatBuffer;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.Sys;
-
 
 public class CameraController {
     
-    //3D vector to store camera position
     private Camera position = null;
     private Camera lPosition = null;
-    
-    //rotation around Y axis of camera
-    private float yaw = 0.0f;
-    
-    //rotation around X axis of camera
-    private float pitch = 0.0f;
-    
-    private Chunk location;
-    
+    private float yaw = 0.0f;   // rotation around Y axis of camera
+    private float pitch = 0.0f; // rotation around X axis of camera
     private Camera me;
-    
+    private Chunk chunk;
+        
     /**
      * Constructor: CameraController
-     * Purpose: Create camera controller at this position  
+     * Purpose: Initialize variables of camera 
      * @param x
      * @param y
      * @param z 
      */
     public CameraController (float x, float y, float z) {
-        
-        //instantiate position of Camera to x y z parameters
         position = new Camera(x, y, z);
-        lPosition = new Camera(x, y, z);
+        lPosition = new Camera(x,y,z);
         lPosition.x = 0f;
         lPosition.y = 15f;
         lPosition.z = 0f;
-       
+	chunk = new Chunk(0, 0, 0);      
     }
     
     /**
@@ -77,9 +69,14 @@ public class CameraController {
      */
     public void walkForward (float distance) {
         float xOffset = distance * (float)Math.sin(Math.toRadians(yaw));
-        float zOffset= distance * (float)Math.cos(Math.toRadians(yaw));
+        float zOffset = distance * (float)Math.cos(Math.toRadians(yaw));
         position.x -= xOffset;
         position.z += zOffset;
+        
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lPosition.x -= xOffset).put(
+        lPosition.y).put(lPosition.z += zOffset).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
         
     /**
@@ -92,6 +89,11 @@ public class CameraController {
         float zOffset= distance * (float) Math.cos(Math.toRadians(yaw));
         position.x += xOffset;
         position.z -= zOffset;
+        
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lPosition.x-=xOffset).put(
+        lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
     /**
@@ -104,6 +106,11 @@ public class CameraController {
         float zOffset= distance * (float) Math.cos(Math.toRadians(yaw - 90));
         position.x -= xOffset;
         position.z += zOffset;
+        
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lPosition.x-=xOffset).put(
+        lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
     /**
@@ -116,6 +123,11 @@ public class CameraController {
         float zOffset= distance * (float)Math.cos(Math.toRadians(yaw+90));
         position.x -= xOffset;
         position.z += zOffset;
+        
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lPosition.x-=xOffset).put(
+        lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
 
     /**
@@ -145,8 +157,12 @@ public class CameraController {
         glRotatef(pitch, 1.0f, 0.0f, 0.0f);
         //roatate the yaw around the Y axis
         glRotatef(yaw, 0.0f, 1.0f, 0.0f);
-        //translate to the position vector's location
+        //translate to the position vector's chunk
         glTranslatef(position.x, position.y, position.z);
+        
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lPosition.x).put(lPosition.y).put(lPosition.z).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
     /*
@@ -154,52 +170,49 @@ public class CameraController {
     Purpose: Main loop for running the program 
     */
     public void gameLoop() {
-        location = new Chunk(0, 0, 0);
+
         CameraController cam = new CameraController(0, 0, 0);
         
         float dx = 0.0f;
         float dy= 0.0f;
-        float dt= 0.0f; //length of frame
-        float lastTime= 0.0f; // when the last frame was
-        long time = 0;
-        float mouseSensitivity= 0.09f;
-        float movementSpeed= .35f;
+        float dt= 0.0f;                 // length of frame
+        float lastTime= 0.0f;           // when the last frame was
+        long time = 0;                  // current time
+        float mouseSensitivity= 0.09f;  // how fast you look around
+        float movementSpeed= .35f;      // how fast you move 
         
-               
+        
         //hide the mouse
         Mouse.setGrabbed(true);
         
-        //keep looping till the display window is closed the ESC key is down 
+        //keep looping till the display window is closed or the ESC key is down 
         while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
             time = Sys.getTime();
             lastTime = time;
             
-            //distance in mouse movement //from the last getDX() call.
-            dx = Mouse.getDX();
             
-            //distance in mouse movement //from the last getDY() call.
-            dy = Mouse.getDY();
+            dx = Mouse.getDX(); // distance in mouse movement from the last getDX() call.
+            dy = Mouse.getDY(); // distance in mouse movement from the last getDY() call.
             
-            //when passing in the distance to move
-            //we times the movementSpeed with this is a time scale
-            //so if its a slow frame u move more then a fast frame
-            //so on a slow computer you move just as fast as on a fast computer
-            if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) { //forward = up arrow or W
+            cam.yaw(dx * mouseSensitivity);      // Updates the yaw with the new position of the mouse
+            cam.pitch(dy * mouseSensitivity);    // Updates the pitch with the new postion of the mouse
+            
+            if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {    // forward = up arrow or W
                 cam.walkForward(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) { //backwards = down arrow or S
+            if (Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {  // backwards = down arrow or S
                 cam.walkBackwards(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_LEFT)) { //left = left arrow or A
+            if (Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {  // left = left arrow or A
                 cam.strafeLeft(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) { //right = right arrow or D
+            if (Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) { // right = right arrow or D
                 cam.strafeRight(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) { //up = space
+            if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {   // up = space
                 cam.moveUp(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { //down = left shift
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {  // down = left shift
                 cam.moveDown(movementSpeed);
             }
             
@@ -209,8 +222,8 @@ public class CameraController {
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
-            location.render(); 
-            //draw the buffer to the screen
+            //render();
+            chunk.render(); 
             Display.update();
             Display.sync(60);
         }

@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            18 April 2019 
+ * Date:            20 April 2019 
  *                  
  * Purpose:         Block Information. 
  *                  
@@ -18,11 +18,11 @@ public class Block {
     private float x, y, z;
 
     public enum BlockType {
-        BlockType_Grass(0),
-        BlockType_Sand(1),
-        BlockType_Water(2),
-        BlockType_Dirt(3),
-        BlockType_Stone(4),
+        BlockType_Grass(0),    
+        BlockType_Sand(1),     
+        BlockType_Water(2),    
+        BlockType_Dirt(3),      
+        BlockType_Stone(4),     
         BlockType_Bedrock(5),
         BlockType_Default(6);
            
@@ -48,7 +48,6 @@ public class Block {
      */
     public Block(BlockType type) {
         Type = type;
-        isActive = false;
     }
 
     /**

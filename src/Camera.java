@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            18 April 2019 
+ * Date:            20 April 2019 
  *                  
  * Purpose:         A 3D vector to hold the camera position.
  *                  

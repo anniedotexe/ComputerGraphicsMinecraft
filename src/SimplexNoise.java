@@ -7,8 +7,6 @@
  * Assignment:      Final Program 
  * Date:            18 April 2019 
  *                  
- * Purpose:         
- *                  
  */
 
 

@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            18 April 2019 
+ * Date:            21 April 2019 
  *                  
  * Purpose:         Create a window and initialize the graphics. 
  *                  
@@ -72,23 +72,25 @@ public class Minecraft {
      */
     private void initGL() {
         
-        glEnable(GL_TEXTURE_2D);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
-        glEnable(GL_DEPTH_TEST);
-        
         glClearColor(0.6f, 0.8f, 1.0f, 0.0f);           // sky blue color
         
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        
-        GLU.gluPerspective(100.0f, (float)displayMode.getWidth()/(float)displayMode.getHeight(), 0.1f, 300.0f);
-
+        GLU.gluPerspective(100.0f, (float)displayMode.getWidth()/(float)
+        displayMode.getHeight(), 0.1f, 300.0f);
         glMatrixMode(GL_MODELVIEW);
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-        glEnable(GL_DEPTH_TEST);                        // hide the hidden faces of objects
         
+        // Block Data
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+        glEnable(GL_DEPTH_TEST);
+        
+        // Texture Mapping
+        glEnable(GL_TEXTURE_2D);
+        glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+        
+        // Light Source
         initLightArrays();
         glLight(GL_LIGHT0, GL_POSITION, lightPosition); // sets light’s position
         glLight(GL_LIGHT0, GL_SPECULAR, whiteLight);    // sets specular light
@@ -104,12 +106,14 @@ public class Minecraft {
      */
     private void initLightArrays() {
         lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(0).put(0).put(0).put(1.0f).flip();
+        lightPosition.put(0.0f).put(0.0f).put(0.0f).put(1.0f).flip();
         whiteLight = BufferUtils.createFloatBuffer(4);
         whiteLight.put(1.0f).put(1.0f).put(1.0f).put(0.0f).flip();
     }
     
     public static void main(String[] args) {
+        System.out.println("DEPRESSED DINOS ASSEMBLE");
+        
         Minecraft game = new Minecraft();
         game.start();
     }

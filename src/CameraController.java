@@ -5,11 +5,12 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            20 April 2019 
+ * Date:            21 April 2019 
  *                  
  * Purpose:         3D vector to store camera position.
  *                  
  */
+
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -21,10 +22,10 @@ import org.lwjgl.Sys;
 
 public class CameraController {
     
-    private Camera position = null;
-    private Camera lPosition = null;
-    private float yaw = 0.0f;   // rotation around Y axis of camera
-    private float pitch = 0.0f; // rotation around X axis of camera
+    private Vector3f position = null;   // 3D vector to store the camera's position in
+    private Vector3f lPosition = null;
+    private float yaw = 0.0f;           // rotation around Y axis of camera
+    private float pitch = 0.0f;         // rotation around X axis of camera
     private Camera me;
     private Chunk chunk;
         
@@ -35,12 +36,9 @@ public class CameraController {
      * @param y
      * @param z 
      */
-    public CameraController (float x, float y, float z) {
-        position = new Camera(x, y, z);
-        lPosition = new Camera(x,y,z);
-        lPosition.x = 0f;
-        lPosition.y = 15f;
-        lPosition.z = 0f;
+    public CameraController(float x, float y, float z) {
+        position = new Vector3f(30f, 0f, 0f);
+        lPosition = new Vector3f(0f, 15f, 0f);
 	chunk = new Chunk(0, 0, 0);      
     }
     
@@ -73,10 +71,9 @@ public class CameraController {
         position.x -= xOffset;
         position.z += zOffset;
         
-        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(lPosition.x -= xOffset).put(
-        lPosition.y).put(lPosition.z += zOffset).put(1.0f).flip();
-        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
+        //FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        //lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
+        //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
         
     /**
@@ -90,10 +87,9 @@ public class CameraController {
         position.x += xOffset;
         position.z -= zOffset;
         
-        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(lPosition.x-=xOffset).put(
-        lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
-        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
+        //FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        //lightPosition.put(lPosition.x+=xOffset).put(lPosition.y).put(lPosition.z-=zOffset).put(1.0f).flip();
+        //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
     /**
@@ -107,10 +103,9 @@ public class CameraController {
         position.x -= xOffset;
         position.z += zOffset;
         
-        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(lPosition.x-=xOffset).put(
-        lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
-        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
+        //FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        //lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
+        //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
     /**
@@ -124,10 +119,9 @@ public class CameraController {
         position.x -= xOffset;
         position.z += zOffset;
         
-        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(lPosition.x-=xOffset).put(
-        lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
-        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
+        //FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        //lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
+        //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
 
     /**
@@ -161,7 +155,7 @@ public class CameraController {
         glTranslatef(position.x, position.y, position.z);
         
         FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(lPosition.x).put(lPosition.y).put(lPosition.z).put(1.0f).flip();
+        lightPosition.put(lPosition.x + 35).put(lPosition.y).put(lPosition.z + 35).put(1.0f).flip();
         glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
@@ -172,7 +166,7 @@ public class CameraController {
     public void gameLoop() {
 
         CameraController cam = new CameraController(0, 0, 0);
-        
+
         float dx = 0.0f;
         float dy= 0.0f;
         float dt= 0.0f;                 // length of frame
@@ -180,7 +174,6 @@ public class CameraController {
         long time = 0;                  // current time
         float mouseSensitivity= 0.09f;  // how fast you look around
         float movementSpeed= .35f;      // how fast you move 
-        
         
         //hide the mouse
         Mouse.setGrabbed(true);
@@ -216,14 +209,12 @@ public class CameraController {
                 cam.moveDown(movementSpeed);
             }
             
-            glLoadIdentity();
-            //look through the camera before you draw anything
-            cam.lookThrough();
-            
+            glLoadIdentity();   // set the modelview matrix back to the identity 
+            cam.lookThrough();  // look through the camera before you draw anything 
+            glEnable(GL_DEPTH_TEST);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
-            //render();
-            chunk.render(); 
+            chunk.render(); //render();
             Display.update();
             Display.sync(60);
         }

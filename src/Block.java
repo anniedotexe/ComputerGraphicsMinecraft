@@ -95,8 +95,8 @@ public class Block {
      * Purpose: Set the ID of a block
      * @param type 
      */
-    public void setID(BlockType type) {
-        Type = type;
+    public void setID(int i) {
+        Type.setID(i);
     }
     
 }

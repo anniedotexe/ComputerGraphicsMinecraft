@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            21 April 2019 
+ * Date:            24 April 2019 
  *                  
  * Purpose:         3D vector to store camera position.
  *                  
@@ -37,8 +37,8 @@ public class CameraController {
      * @param z 
      */
     public CameraController(float x, float y, float z) {
-        position = new Vector3f(30f, 0f, 0f);
-        lPosition = new Vector3f(0f, 15f, 0f);
+        position = new Vector3f(x, y, z);
+        lPosition = new Vector3f(0f, 0f, 0f);
 	chunk = new Chunk(0, 0, 0);      
     }
     
@@ -58,6 +58,14 @@ public class CameraController {
      */
     public void pitch (float amount) {
         pitch -= amount;
+        
+        // Stop user from turning camera upside down
+        if (pitch < -90) {
+            pitch = -90;
+        }
+        if (pitch > 90) {
+            pitch = 90;
+        }
     }
     
     /**
@@ -114,8 +122,8 @@ public class CameraController {
      * @param distance 
      */
     public void strafeRight(float distance) {
-        float xOffset= distance * (float)Math.sin(Math.toRadians(yaw+90));
-        float zOffset= distance * (float)Math.cos(Math.toRadians(yaw+90));
+        float xOffset= distance * (float)Math.sin(Math.toRadians(yaw + 90));
+        float zOffset= distance * (float)Math.cos(Math.toRadians(yaw + 90));
         position.x -= xOffset;
         position.z += zOffset;
         
@@ -165,7 +173,7 @@ public class CameraController {
     */
     public void gameLoop() {
 
-        CameraController cam = new CameraController(0, 0, 0);
+        CameraController cam = new CameraController(-15, 0, 20);
 
         float dx = 0.0f;
         float dy= 0.0f;
@@ -174,6 +182,7 @@ public class CameraController {
         long time = 0;                  // current time
         float mouseSensitivity= 0.09f;  // how fast you look around
         float movementSpeed= .35f;      // how fast you move 
+        cam.yaw(-90);
         
         //hide the mouse
         Mouse.setGrabbed(true);

@@ -5,9 +5,9 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            21 April 2019 
+ * Date:            24 April 2019 
  *                  
- * Purpose:         Create chunks of blocks and add textures from terrain.png 
+ * Purpose:         Create chunks of Blocks and add textures from terrain.png 
  *                  
  */
 
@@ -24,8 +24,8 @@ public class Chunk {
     
     static final int CHUNK_SIZE = 30;
     static final int CUBE_LENGTH = 2;
-    static final float persistanceMin = 0.06f;
-    static final float persistanceMax = 0.12f;
+    static final float persistanceMin = 0.04f;
+    static final float persistanceMax = 0.16f;
     
     private Random random = new Random();
     private Block[][][] Blocks;
@@ -39,7 +39,7 @@ public class Chunk {
     
     /**
      * Constructor: Chunk 
-     * Purpose: Create a chunk of blocks and randomly add textures to each cube 
+     * Purpose: Initialize a chunk of Blocks and randomly add textures to each cube 
      * @param startX
      * @param startY
      * @param startZ 
@@ -54,26 +54,21 @@ public class Chunk {
         
         r = new Random();
         Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-
+        
         for (int x = 0; x < CHUNK_SIZE; x++) {
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 for (int z = 0; z < CHUNK_SIZE; z++) {
                     float rand = r.nextFloat();
-                    boolean dog = true; //this is for testing
-                    
-                    if (y == 0) { // Bottom layer
+
+                    if (y == 0) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Bedrock);
-                    } 
-                    else if (rand > 0.5f && (y == 1 || y == 2)) {
+                    } else if (rand > 0.5f && (y == 1 || y == 2)) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Stone);
-                    } 
-                    else if (rand <= 0.5f && (y == 1 || y == 2)) {
+                    } else if (rand <= 0.5f) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Dirt);
-                    } 
-                    else if (rand > 0.4f) {
+                    } else if (rand > 0.4f) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
-                    } 
-                    else {
+                    } else {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
                     } 
                 }
@@ -110,13 +105,13 @@ public class Chunk {
     
     /**
      * Method: rebuildMesh 
-     * Purpose: Draw chunks of blocks and generate terrain with SimplexNoise
+     * Purpose: Draw chunks of Blocks and generate terrain with SimplexNoise
      * @param startX
      * @param startY
      * @param startZ 
      */
     public void rebuildMesh(float startX, float startY, float startZ) {
-        
+
         int sandXmin = r.nextInt(15);
         int sandXmax = r.nextInt(15)+15;
         int sandZmin = r.nextInt(15);
@@ -132,7 +127,7 @@ public class Chunk {
         }
         int seed = (int) (50 * random.nextFloat());
 
-        noise = new SimplexNoise(CHUNK_SIZE, persistance, seed);
+        SimplexNoise noise = new SimplexNoise(CHUNK_SIZE, persistance, seed);
 
         VBOColorHandle = glGenBuffers();
         VBOVertexHandle = glGenBuffers();
@@ -165,10 +160,16 @@ public class Chunk {
                     else if( x>=sandXmin && x<=sandXmax && z >= sandZmin && z <= sandZmax && y == 3){
                         Blocks[(int)x][(int)y][(int)z] = new Block(Block.BlockType.BlockType_Sand);
                     }
-                    
-                    VertexPositionData.put(createCube(-(float) (startX + x * CUBE_LENGTH), (float) (y * CUBE_LENGTH + (int) (CHUNK_SIZE * .8)-42), -(float) (startZ + z * CUBE_LENGTH)));
-                    VertexColorData.put(createCubeVertexCol(getCubeColor(Blocks[(int) x][(int) y][(int) z])));
-                    VertexTextureData.put(createTexCube((float) 0, (float) 0, Blocks[(int) (x)][(int) (y)][(int) (z)]));
+                    VertexPositionData.put(createCube(
+                            -(float) (startX + x * CUBE_LENGTH),
+                            (float) (y * CUBE_LENGTH + (int) (CHUNK_SIZE * .8)-42),
+                            -(float) (startZ + z * CUBE_LENGTH)));
+
+                    VertexColorData.put(createCubeVertexCol(getCubeColor(
+                            Blocks[(int) x][(int) y][(int) z])));
+
+                    VertexTextureData.put(createTexCube((float) 0,
+                            (float) 0, Blocks[(int) (x)][(int) (y)][(int) (z)]));
                 }
             }
         }
@@ -219,7 +220,7 @@ public class Chunk {
             //TOP QUAD
             x + offset, y + offset, z, 
             x - offset, y + offset, z, 
-            z - offset, y + offset, z - CUBE_LENGTH, 
+            x - offset, y + offset, z - CUBE_LENGTH, 
             x + offset, y + offset, z - CUBE_LENGTH,
             //BOTTOM QUAD
             x + offset, y - offset, z - CUBE_LENGTH,

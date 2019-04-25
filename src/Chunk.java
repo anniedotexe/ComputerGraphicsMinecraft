@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            24 April 2019 
+ * Date:            25 April 2019 
  *                  
  * Purpose:         Create chunks of Blocks and add textures from terrain.png 
  *                  
@@ -24,7 +24,7 @@ public class Chunk {
     
     static final int CHUNK_SIZE = 30;
     static final int CUBE_LENGTH = 2;
-    static final float persistanceMin = 0.04f;
+    static final float persistanceMin = 0.07f;
     static final float persistanceMax = 0.16f;
     
     private Random random = new Random();
@@ -58,19 +58,29 @@ public class Chunk {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 for (int z = 0; z < CHUNK_SIZE; z++) {
-                    float rand = r.nextFloat();
-
                     if (y == 0) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Bedrock);
-                    } else if (rand > 0.5f && (y == 1 || y == 2)) {
-                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Stone);
-                    } else if (rand <= 0.5f) {
-                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Dirt);
-                    } else if (rand > 0.4f) {
-                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
-                    } else {
-                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
-                    } 
+                    }
+                    else if(y == CHUNK_SIZE - 1) {
+                        if (r.nextFloat() > 0.6f) {
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
+                        } else if (r.nextFloat() > 0.3f) {
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Water);
+                        } else if (r.nextFloat() >= 0.0f) {
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
+                        } else {
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Default);
+                        }
+                    }
+                    else {
+                        if (r.nextFloat() > 0.5f) {
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Stone);
+                        } else if (r.nextFloat() >= 0.0f) {
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Dirt);
+                        } else {
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Default);
+                        }
+                    }
                 }
             }
         }
@@ -112,6 +122,8 @@ public class Chunk {
      */
     public void rebuildMesh(float startX, float startY, float startZ) {
 
+        r = new Random();
+        
         int sandXmin = r.nextInt(15);
         int sandXmax = r.nextInt(15)+15;
         int sandZmin = r.nextInt(15);
@@ -121,23 +133,22 @@ public class Chunk {
         int waterXmax = r.nextInt(15)+15;
         int waterZmin = r.nextInt(15);
         int waterZmax = r.nextInt(15)+15;
+        
         float persistance = 0;
         while (persistance < persistanceMin) {
             persistance = (persistanceMax) * random.nextFloat();
         }
         int seed = (int) (50 * random.nextFloat());
 
-        SimplexNoise noise = new SimplexNoise(CHUNK_SIZE, persistance, seed);
+        noise = new SimplexNoise(CHUNK_SIZE, persistance, seed);
 
         VBOColorHandle = glGenBuffers();
         VBOVertexHandle = glGenBuffers();
         VBOTextureHandle = glGenBuffers();
-        FloatBuffer VertexPositionData = BufferUtils.createFloatBuffer(
-                (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
-        FloatBuffer VertexColorData = BufferUtils.createFloatBuffer(
-                (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
-        FloatBuffer VertexTextureData = BufferUtils.createFloatBuffer(
-                (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+        
+        FloatBuffer VertexPositionData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+        FloatBuffer VertexColorData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+        FloatBuffer VertexTextureData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
         
         for (float x = 0; x < CHUNK_SIZE; x++) {
             for (float z = 0; z < CHUNK_SIZE; z++) {
@@ -148,21 +159,26 @@ public class Chunk {
                     if (y >= height) {
                         break;
                     }
-                    //Generate Grass at the top layer
-                    if(y == height -1){
-                        Blocks[(int)x][(int)y][(int)z] = new Block(Block.BlockType.BlockType_Grass);
+                    //Generate Grass or Water or Sand at the top layer
+                    if(y == height -1) {
+                        if (r.nextFloat() > 0.5f) {
+                            //Generate random water area
+                            if (x>=waterXmin && x<=waterXmax && z >= waterZmin && z <= waterZmax) {
+                                Blocks[(int)x][(int)y][(int)z] = new Block(Block.BlockType.BlockType_Water);
+                            }
+                            //Generate random sand area
+                            else if (x>=sandXmin && x<=sandXmax && z >= sandZmin && z <= sandZmax) {
+                                Blocks[(int)x][(int)y][(int)z] = new Block(Block.BlockType.BlockType_Sand);
+                            }
+                        }
+                        else {
+                            Blocks[(int)x][(int)y][(int)z] = new Block(Block.BlockType.BlockType_Grass);
+                        }
                     }
-                    //Generate random water area
-                    if( x>=waterXmin && x<=waterXmax && z >= waterZmin && z <= waterZmax && y == 3){
-                        Blocks[(int)x][(int)y][(int)z] = new Block(Block.BlockType.BlockType_Water);
-                    }
-                    //Generate random sand area
-                    else if( x>=sandXmin && x<=sandXmax && z >= sandZmin && z <= sandZmax && y == 3){
-                        Blocks[(int)x][(int)y][(int)z] = new Block(Block.BlockType.BlockType_Sand);
-                    }
+                    
                     VertexPositionData.put(createCube(
                             -(float) (startX + x * CUBE_LENGTH),
-                            (float) (y * CUBE_LENGTH + (int) (CHUNK_SIZE * .8)-42),
+                            (float) (y * CUBE_LENGTH + (int) (CHUNK_SIZE*.8)),
                             -(float) (startZ + z * CUBE_LENGTH)));
 
                     VertexColorData.put(createCubeVertexCol(getCubeColor(
@@ -363,10 +379,10 @@ public class Chunk {
             case 3: // Dirt
                 return new float[]{
                     // BOTTOM QUAD(DOWN=+Y)
-                    x + offset * 1, y + offset * 10,
-                    x + offset * 2, y + offset * 10,
-                    x + offset * 2, y + offset * 11,
-                    x + offset * 1, y + offset * 11,
+                    x + offset * 3, y + offset * 1,
+                    x + offset * 2, y + offset * 1,
+                    x + offset * 2, y + offset * 0,
+                    x + offset * 3, y + offset * 0,
                     // TOP!
                     x + offset * 3, y + offset * 1,
                     x + offset * 2, y + offset * 1,

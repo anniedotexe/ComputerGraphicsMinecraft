@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            24 April 2019 
+ * Date:            25 April 2019 
  *                  
  * Purpose:         3D vector to store camera position.
  *                  
@@ -163,7 +163,7 @@ public class CameraController {
         glTranslatef(position.x, position.y, position.z);
         
         FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(lPosition.x + 35).put(lPosition.y).put(lPosition.z + 35).put(1.0f).flip();
+        lightPosition.put(lPosition.x).put(lPosition.y).put(lPosition.z).put(1.0f).flip();
         glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
@@ -173,7 +173,7 @@ public class CameraController {
     */
     public void gameLoop() {
 
-        CameraController cam = new CameraController(-15, 0, 20);
+        CameraController cam = new CameraController(10, -40, 25);
 
         float dx = 0.0f;
         float dy= 0.0f;

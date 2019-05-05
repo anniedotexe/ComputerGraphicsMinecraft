@@ -23,8 +23,7 @@ public class Block {
         BlockType_Water(2),    
         BlockType_Dirt(3),      
         BlockType_Stone(4),     
-        BlockType_Bedrock(5),
-        BlockType_Default(6);
+        BlockType_Bedrock(5);
            
         private int BlockID;   
         
@@ -48,6 +47,7 @@ public class Block {
      */
     public Block(BlockType type) {
         Type = type;
+        isActive = true;
     }
 
     /**

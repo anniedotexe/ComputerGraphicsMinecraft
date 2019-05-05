@@ -11,29 +11,28 @@
  *                  
  */
 
-import java.io.*;
 import java.util.*;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.util.glu.GLU;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.util.vector.Vector3f;
 
 public class Minecraft {
     
-    private DisplayMode displayMode;
-    private CameraController cam;
-    public FloatBuffer lightPosition;
-    public FloatBuffer whiteLight;
-
+    private static DisplayMode displayMode;
+    private static CameraController cam;
+    public static FloatBuffer lightPosition;
+    public static FloatBuffer whiteLight;
+    
     /**
      * Method: start
      * Purpose: Run the methods we need to draw with OpenGL
      */
-    public void start() {
+    public static void start() {
         
         //initialize our instance of our camera controller inside start method
         try {
@@ -48,21 +47,21 @@ public class Minecraft {
     
     /**
      * Method: createWindow
-     * Purpose: Create a 640x840 window
+     * Purpose: Create a 640x480 window
      */
-    private void createWindow() throws Exception {
+    private static void createWindow() throws Exception {
         Display.setFullscreen(false);   // Not fullscreen
         DisplayMode d[] = Display.getAvailableDisplayModes();
         
         for (int i = 0; i < d.length; i++) {
-            if(d[i].getWidth() == 640 && d[i].getHeight() == 480 && d[i].getBitsPerPixel() == 32) {
+            if(d[i].getWidth() == 800 && d[i].getHeight() == 600 && d[i].getBitsPerPixel() == 32) {
                 displayMode = d[i];
                 break;  
             }
         }
         
         Display.setDisplayMode(displayMode); 
-        Display.setTitle("DEPRESSED DINOS DEPRESSED DINOS");  
+        Display.setTitle("DEPRESSED DINOS DEPRESSED DINOS DEPRESSED DINOS");  
         Display.create();  
     }
     
@@ -70,7 +69,7 @@ public class Minecraft {
      * Method: initGL
      * Purpose: Initialize the graphics
      */
-    private void initGL() {
+    private static void initGL() {
         
         glClearColor(0.6f, 0.8f, 1.0f, 0.0f);           // sky blue color
         
@@ -104,13 +103,13 @@ public class Minecraft {
      * Method: initiLightArrays
      * Purpose: Initialize light arrays 
      */
-    private void initLightArrays() {
+    private static void initLightArrays() {
         lightPosition = BufferUtils.createFloatBuffer(4);
         lightPosition.put(0.0f).put(0.0f).put(0.0f).put(1.0f).flip();
         whiteLight = BufferUtils.createFloatBuffer(4);
         whiteLight.put(1.0f).put(1.0f).put(1.0f).put(0.0f).flip();
     }
-    
+        
     public static void main(String[] args) {
         System.out.println("DEPRESSED DINOS ASSEMBLE");
         

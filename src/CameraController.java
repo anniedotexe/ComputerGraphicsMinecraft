@@ -22,12 +22,12 @@ import org.lwjgl.Sys;
 
 public class CameraController {
     
-    private Vector3f position = null;   // 3D vector to store the camera's position in
-    private Vector3f lPosition = null;
-    private float yaw = 0.0f;           // rotation around Y axis of camera
-    private float pitch = 0.0f;         // rotation around X axis of camera
-    private Camera me;
-    private Chunk chunk;
+    private static Vector3f position = null;    // 3D vector to store the camera's position in
+    private static Vector3f lPosition = null;
+    private static float yaw;                   // rotation around Y axis of camera
+    private static float pitch;                 // rotation around X axis of camera
+    private static Camera me;
+    private static Chunk chunk;
         
     /**
      * Constructor: CameraController
@@ -39,7 +39,9 @@ public class CameraController {
     public CameraController(float x, float y, float z) {
         position = new Vector3f(x, y, z);
         lPosition = new Vector3f(0f, 0f, 0f);
-	chunk = new Chunk(0, 0, 0);      
+        yaw = 90.0f;
+        pitch = 20.0f;
+	chunk = new Chunk(-20, -135, -50);      
     }
     
     /**
@@ -47,7 +49,7 @@ public class CameraController {
      * Purpose: Increment current yaw rotation by amount
     * @param amount
     */
-    public void yaw (float amount) {
+    public static void yaw (float amount) {
         yaw += amount;
     }
     
@@ -56,7 +58,7 @@ public class CameraController {
      * Purpose: increment pitch by amount
      * @param amount 
      */
-    public void pitch (float amount) {
+    public static void pitch (float amount) {
         pitch -= amount;
         
         // Stop user from turning camera upside down
@@ -73,7 +75,7 @@ public class CameraController {
      * Purpose: Move camera forward relative to current rotation (yaw) 
      * @param distance 
      */
-    public void walkForward (float distance) {
+    public static void walkForward (float distance) {
         float xOffset = distance * (float)Math.sin(Math.toRadians(yaw));
         float zOffset = distance * (float)Math.cos(Math.toRadians(yaw));
         position.x -= xOffset;
@@ -89,14 +91,14 @@ public class CameraController {
      * Purpose: Move camera backward relative to current rotation (yaw) 
      * @param distance 
      */
-    public void walkBackwards (float distance) {
+    public static void walkBackwards (float distance) {
         float xOffset= distance * (float) Math.sin(Math.toRadians(yaw));
         float zOffset= distance * (float) Math.cos(Math.toRadians(yaw));
         position.x += xOffset;
         position.z -= zOffset;
         
         //FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        //lightPosition.put(lPosition.x+=xOffset).put(lPosition.y).put(lPosition.z-=zOffset).put(1.0f).flip();
+        //lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
         //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
@@ -105,7 +107,7 @@ public class CameraController {
      * Purpose: Strafe camera to the left relative to current rotation (yaw)
      * @param distance 
      */
-    public void strafeLeft(float distance) {
+    public static void strafeLeft(float distance) {
         float xOffset= distance * (float) Math.sin(Math.toRadians(yaw - 90));
         float zOffset= distance * (float) Math.cos(Math.toRadians(yaw - 90));
         position.x -= xOffset;
@@ -121,7 +123,7 @@ public class CameraController {
      * Purpose: Strafe camera to the right relative to current rotation (yaw)
      * @param distance 
      */
-    public void strafeRight(float distance) {
+    public static void strafeRight(float distance) {
         float xOffset= distance * (float)Math.sin(Math.toRadians(yaw + 90));
         float zOffset= distance * (float)Math.cos(Math.toRadians(yaw + 90));
         position.x -= xOffset;
@@ -130,6 +132,7 @@ public class CameraController {
         //FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
         //lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
         //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
+        
     }
 
     /**
@@ -137,7 +140,7 @@ public class CameraController {
      * Purpose: Move camera up
      * @param distance 
      */
-    public void moveUp(float distance) {
+    public static void moveUp(float distance) {
         position.y -= distance;
     }
 
@@ -146,7 +149,7 @@ public class CameraController {
      * Purpose: Move camera down
      * @param distance 
      */
-    public void moveDown(float distance) {
+    public static void moveDown(float distance) {
         position.y += distance;
     }
     
@@ -154,7 +157,7 @@ public class CameraController {
      * Method: lookThrough
      * Purpose: This does basically what gluLookAt() does
      */
-    public void lookThrough() {
+    public static void lookThrough() {
         //roatate the pitch around the X axis
         glRotatef(pitch, 1.0f, 0.0f, 0.0f);
         //roatate the yaw around the Y axis
@@ -163,7 +166,7 @@ public class CameraController {
         glTranslatef(position.x, position.y, position.z);
         
         FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(lPosition.x).put(lPosition.y).put(lPosition.z).put(1.0f).flip();
+        lightPosition.put(position.x).put(position.y).put(position.z).put(1f).flip();
         glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
@@ -171,18 +174,17 @@ public class CameraController {
     Method: gameLoop
     Purpose: Main loop for running the program 
     */
-    public void gameLoop() {
+    public static void gameLoop() {
 
-        CameraController cam = new CameraController(10, -40, 25);
+        CameraController cam = new CameraController(0, 0, 0);
 
         float dx = 0.0f;
-        float dy= 0.0f;
-        float dt= 0.0f;                 // length of frame
-        float lastTime= 0.0f;           // when the last frame was
+        float dy = 0.0f;
+        float dt = 0.0f;                // length of frame
+        float lastTime = 0.0f;          // when the last frame was
         long time = 0;                  // current time
         float mouseSensitivity= 0.09f;  // how fast you look around
-        float movementSpeed= .35f;      // how fast you move 
-        cam.yaw(-90);
+        float movementSpeed= .38f;      // how fast you move 
         
         //hide the mouse
         Mouse.setGrabbed(true);
@@ -234,7 +236,7 @@ public class CameraController {
     Method: render
     Purpose: Render what we want to draw 
     */
-    private void render() {
+    private static void render() {
         try {
             glBegin(GL_QUADS);
                 glColor3f(1.0f,0.0f,1.0f);

@@ -31,7 +31,7 @@ public class CameraController {
         
     /**
      * Constructor: CameraController
-     * Purpose: Initialize variables of camera 
+     * Purpose: Initialize variables of the camera and the chunk 
      * @param x
      * @param y
      * @param z 

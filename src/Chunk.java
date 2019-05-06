@@ -60,14 +60,30 @@ public class Chunk {
                     if (y == 0) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Bedrock);
                     } 
-                    else if (y >= 14 && y <= 17) {
+                    
+                    else if (y >= 16 && y <= 17) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Water);
+                        if(y == 17)
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
                     } 
+                    
+                    else if(y > 17) {
+                        int ranNum = r.nextInt(1);
+                        switch(ranNum) {
+                            case 0:
+                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
+                            case 1:
+                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
+                        }
+                            
+                    }
+                    
                     else if (y >= 17 + noise.getNoise(x, z) * 5) {
-                        int ranNum = r.nextInt(2);
+                        int ranNum = r.nextInt(1);
                         switch (ranNum) {
                             case 0:
-                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
+                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Water);
+                                    
                                 break;
                             case 1:
                                 Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
@@ -83,8 +99,11 @@ public class Chunk {
                             case 1:
                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Stone);
                                break;
+                                                            
                         }
                     } 
+                    
+                    //bottom level
                     else if (y == 0) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Bedrock);
                     }

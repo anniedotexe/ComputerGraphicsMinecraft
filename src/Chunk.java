@@ -50,63 +50,49 @@ public class Chunk {
         }
         
         r = new Random();
-        noise = new SimplexNoise(40, .60f, r.nextInt());
+        noise = new SimplexNoise(40, .55f, r.nextInt());
         
         Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
         
         for (int x = 0; x < CHUNK_SIZE; x++) {
             for(int z = 0; z < CHUNK_SIZE; z++) {
                 for(int y = 0; y < CHUNK_SIZE; y++) {
+                    // Bottom Level
                     if (y == 0) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Bedrock);
                     } 
-                    
-                    else if (y >= 16 && y <= 17) {
+                    // Water 
+                    else if (y >= 14 && y <= 16) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Water);
-                        if(y == 17)
-                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
                     } 
-                    
-                    else if(y > 17) {
-                        int ranNum = r.nextInt(1);
-                        switch(ranNum) {
-                            case 0:
-                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
-                            case 1:
-                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
-                        }
-                            
+                    // Sand 
+                    else if (y == 17) {
+                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
                     }
-                    
+                    // Grass top level 
                     else if (y >= 17 + noise.getNoise(x, z) * 5) {
-                        int ranNum = r.nextInt(1);
-                        switch (ranNum) {
-                            case 0:
-                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Water);
-                                    
-                                break;
-                            case 1:
-                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
-                                break;    
+                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
+                    }
+                    // Dirt or Stone in the middle
+                    else if (y <= 17 + noise.getNoise(x, z) * 5) {
+                        if (y > 17) {
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Dirt);
                         }
-                    } 
-                    else if (y < 17 + noise.getNoise(x, z) * 5) {
-                        int ranNum = r.nextInt(2);
-                        switch(ranNum){
-                            case 0:
-                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Dirt);
-                                break;
-                            case 1:
-                               Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Stone);
-                               break;
-                                                            
+                        else {
+                            int ranNum = r.nextInt(2);
+                            switch(ranNum) {
+                                case 0:
+                                    Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Dirt);
+                                    break;
+                                case 1:
+                                   Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Stone);
+                                   break;
+
+                            }
                         }
                     } 
                     
-                    //bottom level
-                    else if (y == 0) {
-                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Bedrock);
-                    }
+                    
                     if (y >= 18 + noise.getNoise(x, z) * 5) {
                         Blocks[x][y][z].setActive(false);
                     }

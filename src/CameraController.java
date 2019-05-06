@@ -81,6 +81,8 @@ public class CameraController {
         position.x -= xOffset;
         position.z += zOffset;
         
+       
+            
         //FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
         //lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
         //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
@@ -176,6 +178,8 @@ public class CameraController {
     */
     public static void gameLoop() {
 
+        boolean toggleBound = false;
+        
         CameraController cam = new CameraController(0, 0, 0);
 
         float dx = 0.0f;
@@ -220,10 +224,38 @@ public class CameraController {
                 cam.moveDown(movementSpeed);
             }
             
+          
+            
             glLoadIdentity();   // set the modelview matrix back to the identity 
             cam.lookThrough();  // look through the camera before you draw anything 
             glEnable(GL_DEPTH_TEST);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+         
+            //boundaries
+            if(Keyboard.isKeyDown(Keyboard.KEY_B)) {
+                
+                if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {    // forward = up arrow or W
+                     cam.walkForward(0);
+                 }
+                 if (Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {  // backwards = down arrow or S
+                     cam.walkBackwards(0);
+                 }
+                 if (Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {  // left = left arrow or A
+                     cam.strafeLeft(0);
+                 }
+                 if (Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) { // right = right arrow or D
+                     cam.strafeRight(0);
+                 }
+                 if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {   // up = space
+                     cam.moveUp(0);
+                 }
+                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {  // down = left shift
+                     cam.moveDown(0);
+                 }
+            }
+            if(Keyboard.isKeyDown(Keyboard.KEY_R)) {
+                 Chunk reset = new Chunk(-20, -135, -50);
+            }
             
             chunk.render(); //render();
             Display.update();

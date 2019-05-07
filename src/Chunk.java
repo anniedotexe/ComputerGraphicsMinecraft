@@ -69,9 +69,15 @@ public class Chunk {
                     else if (y == 17) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
                     }
-                    // Grass top level 
+                    // Grass top level with 1/500 chance of a kermit grass block
                     else if (y >= 17 + noise.getNoise(x, z) * 5) {
-                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
+                        int randNum = r.nextInt(500);
+                        if (randNum == 21) {
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Kermit);
+                        }
+                        else {
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
+                        }
                     }
                     // Dirt or Stone in the middle
                     else if (y <= 17 + noise.getNoise(x, z) * 5) {
@@ -251,11 +257,11 @@ public class Chunk {
             case 0: // Grass 
                 return new float[]{
                     // BOTTOM QUAD(DOWN=+Y)
-                    x + offset * 3, y + offset * 10,
                     x + offset * 2, y + offset * 10,
+                    x + offset * 1, y + offset * 10,
+                    x + offset * 1, y + offset * 9,
                     x + offset * 2, y + offset * 9,
-                    x + offset * 3, y + offset * 9,
-                    // TOP!
+                    // TOP QUAD
                     x + offset * 3, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 0,
@@ -288,7 +294,7 @@ public class Chunk {
                     x + offset * 3, y + offset * 1,
                     x + offset * 3, y + offset * 2,
                     x + offset * 2, y + offset * 2,
-                    // TOP!
+                    // TOP QUAD
                     x + offset * 2, y + offset * 1,
                     x + offset * 3, y + offset * 1,
                     x + offset * 3, y + offset * 2,
@@ -321,7 +327,7 @@ public class Chunk {
                     x + offset * 16, y + offset * 12,
                     x + offset * 15, y + offset * 13,
                     x + offset * 16, y + offset * 13,
-                    // TOP!
+                    // TOP QUAD
                     x + offset * 15, y + offset * 12,
                     x + offset * 16, y + offset * 12,
                     x + offset * 15, y + offset * 13,
@@ -354,7 +360,7 @@ public class Chunk {
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 0,
                     x + offset * 3, y + offset * 0,
-                    // TOP!
+                    // TOP QUAD
                     x + offset * 3, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 0,
@@ -387,7 +393,7 @@ public class Chunk {
                     x + offset * 2, y + offset * 0,
                     x + offset * 2, y + offset * 1,
                     x + offset * 1, y + offset * 1,
-                    // TOP!
+                    // TOP QUAD
                     x + offset * 1, y + offset * 0,
                     x + offset * 2, y + offset * 0,
                     x + offset * 2, y + offset * 1,
@@ -420,7 +426,7 @@ public class Chunk {
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 2,
                     x + offset * 1, y + offset * 2,
-                    // TOP!
+                    // TOP QUAD
                     x + offset * 1, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 2,
@@ -445,6 +451,39 @@ public class Chunk {
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 2,
                     x + offset * 1, y + offset * 2
+                };
+            case 6: // Kermit 
+                return new float[]{
+                    // BOTTOM QUAD(DOWN=+Y)
+                    x + offset * 3, y + offset * 10,
+                    x + offset * 2, y + offset * 10,
+                    x + offset * 2, y + offset * 9,
+                    x + offset * 3, y + offset * 9,
+                    // TOP QUAD
+                    x + offset * 3, y + offset * 1,
+                    x + offset * 2, y + offset * 1,
+                    x + offset * 2, y + offset * 0,
+                    x + offset * 3, y + offset * 0,
+                    // FRONT QUAD
+                    x + offset * 3, y + offset * 0,
+                    x + offset * 4, y + offset * 0,
+                    x + offset * 4, y + offset * 1,
+                    x + offset * 3, y + offset * 1,
+                    // BACK QUAD
+                    x + offset * 4, y + offset * 1,
+                    x + offset * 3, y + offset * 1,
+                    x + offset * 3, y + offset * 0,
+                    x + offset * 4, y + offset * 0,
+                    // LEFT QUAD
+                    x + offset * 3, y + offset * 0,
+                    x + offset * 4, y + offset * 0,
+                    x + offset * 4, y + offset * 1,
+                    x + offset * 3, y + offset * 1,
+                    // RIGHT QUAD
+                    x + offset * 3, y + offset * 0,
+                    x + offset * 4, y + offset * 0,
+                    x + offset * 4, y + offset * 1,
+                    x + offset * 3, y + offset * 1
                 };
         }
     }

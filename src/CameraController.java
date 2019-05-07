@@ -224,15 +224,18 @@ public class CameraController {
                 cam.moveDown(movementSpeed);
             }
             
-          
+            // New chunk terrain
+            if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
+                 chunk = new Chunk(-20, -135, -50);
+            }
             
             glLoadIdentity();   // set the modelview matrix back to the identity 
             cam.lookThrough();  // look through the camera before you draw anything 
             glEnable(GL_DEPTH_TEST);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
          
-            //boundaries
-            if(Keyboard.isKeyDown(Keyboard.KEY_B)) {
+            // Boundaries
+            if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
                 
                 if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {    // forward = up arrow or W
                      cam.walkForward(0);
@@ -253,9 +256,7 @@ public class CameraController {
                      cam.moveDown(0);
                  }
             }
-            if(Keyboard.isKeyDown(Keyboard.KEY_R)) {
-                 Chunk reset = new Chunk(-20, -135, -50);
-            }
+            
             
             chunk.render(); //render();
             Display.update();

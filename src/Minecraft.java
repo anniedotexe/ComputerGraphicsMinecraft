@@ -47,7 +47,7 @@ public class Minecraft {
     
     /**
      * Method: createWindow
-     * Purpose: Create a 640x480 window
+     * Purpose: Create a 800x600 window
      */
     private static void createWindow() throws Exception {
         Display.setFullscreen(false);   // Not fullscreen

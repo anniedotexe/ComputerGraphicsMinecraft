@@ -131,11 +131,13 @@ public class Chunk {
                     else if (y == 17) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
                     }
-                    // Grass top level with 1/500 chance of a surprise grass block
+                    // Grass top level 
                     else if (y >= 17 + noise.getNoise(x, z) * 5) {
+                        // If kermit is true, generate all kermit grass block
                         if (kermit) {
                             Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Surprise);
                         }
+                        // Else 1/500 chance of a kermit grass block
                         else {
                             int randNum = r.nextInt(500);
                             if (randNum == 21) {
@@ -165,18 +167,11 @@ public class Chunk {
                             }
                         }
                     } 
-                    
-                    
                     if (y >= 18 + noise.getNoise(x, z) * 5) {
                         Blocks[x][y][z].setActive(false);
                     }
-                }
-            }
-        }
-        
-        for (float x = 0; x < CHUNK_SIZE; x += 1) {
-            for (float z = 0; z < CHUNK_SIZE; z += 1) {
-                for (float y = 0; y < CHUNK_SIZE; y++) {
+                    
+                    // Place active blocks
                     if(Blocks[(int)x][(int)y][(int)z].isActive()){
                         VertexPositionData.put(createCube((float) (startX + x * CUBE_LENGTH),
                                 (float) (startY + y * CUBE_LENGTH + (int) (CHUNK_SIZE * .8)),
@@ -187,7 +182,7 @@ public class Chunk {
                 }
             }
         }
-        
+
         VertexColorData.flip();
         VertexPositionData.flip();
         VertexTextureData.flip();

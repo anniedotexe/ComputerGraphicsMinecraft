@@ -23,11 +23,10 @@ import org.lwjgl.Sys;
 
 public class CameraController {
     
-    private static Vector3f position = null;    // 3D vector to store the camera's position in
-    private static Vector3f lPosition = null;
-    private static float yaw;                   // rotation around Y axis of camera
-    private static float pitch;                 // rotation around X axis of camera
-    private static Camera me;
+    private static Vector3f position = null;    // Camera position
+    private static Vector3f lPosition = null;   // Light position
+    private static float yaw;                   // Rotation around Y axis of camera
+    private static float pitch;                 // Rotation around X axis of camera
     private static Chunk chunk;
     private static boolean kermit = false;
     
@@ -180,42 +179,42 @@ public class CameraController {
 
         float dx = 0.0f;
         float dy = 0.0f;
-        float dt = 0.0f;                // length of frame
-        float lastTime = 0.0f;          // when the last frame was
-        long time = 0;                  // current time
-        float mouseSensitivity= 0.09f;  // how fast you look around
-        float movementSpeed= .42f;      // how fast you move 
+        float dt = 0.0f;                // Length of frame
+        float lastTime = 0.0f;          // When the last frame was
+        long time = 0;                  // Current time
+        float mouseSensitivity= 0.09f;  // How fast you look around
+        float movementSpeed= .42f;      // How fast you move 
         
-        //hide the mouse
+        // Hide the mouse
         Mouse.setGrabbed(true);
         
-        //keep looping till the display window is closed or the ESC key is down 
+        // Keep looping till the display window is closed or the ESC key is down 
         while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
             time = Sys.getTime();
             lastTime = time;
             
-            dx = Mouse.getDX(); // distance in mouse movement from the last getDX() call.
-            dy = Mouse.getDY(); // distance in mouse movement from the last getDY() call.
+            dx = Mouse.getDX(); // Distance in mouse movement from the last getDX() call.
+            dy = Mouse.getDY(); // Distance in mouse movement from the last getDY() call.
             
             cam.yaw(dx * mouseSensitivity);      // Updates the yaw with the new position of the mouse
             cam.pitch(dy * mouseSensitivity);    // Updates the pitch with the new postion of the mouse
             
-            if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {    // forward = up arrow or W
+            if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {    // Forward = up arrow or W
                 cam.walkForward(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {  // backwards = down arrow or S
+            if (Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {  // Backwards = down arrow or S
                 cam.walkBackwards(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {  // left = left arrow or A
+            if (Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {  // Left = left arrow or A
                 cam.strafeLeft(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) { // right = right arrow or D
+            if (Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) { // Right = right arrow or D
                 cam.strafeRight(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {   // up = space
+            if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {   // Up = space
                 cam.moveUp(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {  // down = left shift
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {  // Down = left shift
                 cam.moveDown(movementSpeed);
             }
             
@@ -231,8 +230,8 @@ public class CameraController {
                 chunk.rebuildMesh(-20, -135, -50, kermit);
             }
                         
-            glLoadIdentity();   // set the modelview matrix back to the identity 
-            cam.lookThrough();  // look through the camera before you draw anything 
+            glLoadIdentity();   // Set the modelview matrix back to the identity 
+            cam.lookThrough();  // Look through the camera before you draw anything 
             glEnable(GL_DEPTH_TEST);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             
@@ -256,7 +255,6 @@ public class CameraController {
                 glVertex3f(-1.0f, 1.0f,-1.0f);
                 glVertex3f( 1.0f, 1.0f,-1.0f); 
             glEnd();
-        } catch(Exception e) {
-        }
+        } catch(Exception e) { }
     }
 }

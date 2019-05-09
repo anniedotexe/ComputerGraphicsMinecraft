@@ -11,15 +11,12 @@
  *                  
  */
 
-import java.util.*;
-
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.util.glu.GLU;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.util.vector.Vector3f;
 
 public class Minecraft {
     
@@ -34,7 +31,7 @@ public class Minecraft {
      */
     public static void start() {
         
-        //initialize our instance of our camera controller inside start method
+        // Initialize our instance of our camera controller inside start method
         try {
             createWindow();
             initGL();

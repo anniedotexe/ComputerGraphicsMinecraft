@@ -24,7 +24,7 @@ public class Block {
         BlockType_Dirt(3),      
         BlockType_Stone(4),     
         BlockType_Bedrock(5),
-        BlockType_Surprise(6);
+        BlockType_Surprise(6); // Kermit Grass Top
            
         private int BlockID;   
         

@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            25 April 2019 
+ * Date:            8 May 2019 
  *                  
  * Purpose:         Create chunks of Blocks and add textures from terrain.png 
  *                  
@@ -40,10 +40,14 @@ public class Chunk {
      * @param startX
      * @param startY
      * @param startZ 
+     * @param textureNum 1 is original, 2 is candy land
      */
-    public Chunk(int startX, int startY, int startZ) {
+    public Chunk(int startX, int startY, int startZ, int textureNum) {
         try {
-            texture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("terrain.png"));
+            if (textureNum == 1) 
+                texture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("terrain.png"));
+            if (textureNum == 2) 
+                texture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("terrain2.png"));
         }
         catch(Exception e) {
             System.out.print("ISSA ER-ROOOAR!!");
@@ -69,11 +73,11 @@ public class Chunk {
                     else if (y == 17) {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
                     }
-                    // Grass top level with 1/500 chance of a kermit grass block
+                    // Grass top level with 1/500 chance of a surprise grass block
                     else if (y >= 17 + noise.getNoise(x, z) * 5) {
                         int randNum = r.nextInt(500);
                         if (randNum == 21) {
-                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Kermit);
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Surprise);
                         }
                         else {
                             Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
@@ -116,7 +120,7 @@ public class Chunk {
         rebuildMesh(startX, startY, startZ);
     }
 
-
+    
     /**
      * Method: render
      * Purpose: Render the graphics

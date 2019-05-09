@@ -5,18 +5,20 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            25 April 2019 
+ * Date:            8 May 2019 
  *                  
  * Purpose:         3D vector to store camera position.
  *                  
  */
 
+import java.io.IOException;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
 import java.nio.FloatBuffer;
+import java.util.Random;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Sys;
 
@@ -28,6 +30,7 @@ public class CameraController {
     private static float pitch;                 // rotation around X axis of camera
     private static Camera me;
     private static Chunk chunk;
+    private static Random r = new Random();
         
     /**
      * Constructor: CameraController
@@ -41,7 +44,7 @@ public class CameraController {
         lPosition = new Vector3f(0f, 0f, 0f);
         yaw = 90.0f;
         pitch = 20.0f;
-	chunk = new Chunk(-20, -135, -50);      
+	chunk = new Chunk(-20, -135, -50, 2);      
     }
     
     /**
@@ -176,10 +179,7 @@ public class CameraController {
     Method: gameLoop
     Purpose: Main loop for running the program 
     */
-    public static void gameLoop() {
-
-        boolean toggleBound = false;
-        
+    public static void gameLoop() throws IOException {
         CameraController cam = new CameraController(0, 0, 0);
 
         float dx = 0.0f;
@@ -188,7 +188,7 @@ public class CameraController {
         float lastTime = 0.0f;          // when the last frame was
         long time = 0;                  // current time
         float mouseSensitivity= 0.09f;  // how fast you look around
-        float movementSpeed= .38f;      // how fast you move 
+        float movementSpeed= .42f;      // how fast you move 
         
         //hide the mouse
         Mouse.setGrabbed(true);
@@ -224,39 +224,20 @@ public class CameraController {
                 cam.moveDown(movementSpeed);
             }
             
-            // New chunk terrain
+            // Change terrain of original texture
             if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
-                 chunk = new Chunk(-20, -135, -50);
+                chunk = new Chunk(-20, -135, -50, 1);
+            }
+            
+            // Change terrain of candy world texture
+            if (Keyboard.isKeyDown(Keyboard.KEY_T)) {
+                chunk = new Chunk(-20, -135, -50, 2);
             }
             
             glLoadIdentity();   // set the modelview matrix back to the identity 
             cam.lookThrough();  // look through the camera before you draw anything 
             glEnable(GL_DEPTH_TEST);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-         
-            // Boundaries
-            if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
-                
-                if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {    // forward = up arrow or W
-                     cam.walkForward(0);
-                 }
-                 if (Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {  // backwards = down arrow or S
-                     cam.walkBackwards(0);
-                 }
-                 if (Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {  // left = left arrow or A
-                     cam.strafeLeft(0);
-                 }
-                 if (Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) { // right = right arrow or D
-                     cam.strafeRight(0);
-                 }
-                 if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {   // up = space
-                     cam.moveUp(0);
-                 }
-                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {  // down = left shift
-                     cam.moveDown(0);
-                 }
-            }
-            
             
             chunk.render(); //render();
             Display.update();

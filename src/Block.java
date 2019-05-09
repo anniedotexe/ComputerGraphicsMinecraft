@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            20 April 2019 
+ * Date:            8 May 2019 
  *                  
  * Purpose:         Block Information. 
  *                  
@@ -24,7 +24,7 @@ public class Block {
         BlockType_Dirt(3),      
         BlockType_Stone(4),     
         BlockType_Bedrock(5),
-        BlockType_Kermit(6);
+        BlockType_Surprise(6);
            
         private int BlockID;   
         

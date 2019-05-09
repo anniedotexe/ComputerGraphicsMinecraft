@@ -42,7 +42,6 @@ public class Chunk {
      * @param startZ 
      */
     public Chunk(int startX, int startY, int startZ) {
-                
         try {
             texture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("terrain.png"));
         }
@@ -73,7 +72,6 @@ public class Chunk {
         rebuildMesh(startX, startY, startZ, false);
     }
 
-    
     /**
      * Method: render
      * Purpose: Render the graphics
@@ -99,7 +97,6 @@ public class Chunk {
      * @param startZ 
      */
     public static void rebuildMesh(float startX, float startY, float startZ, boolean kermit) {
-
         VBOColorHandle = glGenBuffers();
         VBOVertexHandle = glGenBuffers();
         VBOTextureHandle = glGenBuffers();
@@ -109,7 +106,6 @@ public class Chunk {
                 (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
         FloatBuffer VertexTextureData = BufferUtils.createFloatBuffer(
                 (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
-        
         
         r = new Random();
         noise = new SimplexNoise(40, .55f, r.nextInt());
@@ -163,7 +159,6 @@ public class Chunk {
                                 case 1:
                                    Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Stone);
                                    break;
-
                             }
                         }
                     } 
@@ -172,7 +167,7 @@ public class Chunk {
                     }
                     
                     // Place active blocks
-                    if(Blocks[(int)x][(int)y][(int)z].isActive()){
+                    if (Blocks[(int)x][(int)y][(int)z].isActive()) {
                         VertexPositionData.put(createCube((float) (startX + x * CUBE_LENGTH),
                                 (float) (startY + y * CUBE_LENGTH + (int) (CHUNK_SIZE * .8)),
                                 (float) (startZ + z * CUBE_LENGTH)));

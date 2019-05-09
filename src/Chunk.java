@@ -24,8 +24,8 @@ public class Chunk {
     
     static final int CHUNK_SIZE = 60;
     static final int CUBE_LENGTH = 2;
+    static Block[][][] Blocks;
     
-    private static Block[][][] Blocks;
     private static int VBOVertexHandle;
     private static int VBOColorHandle;
     private static int StartX, StartY, StartZ;
@@ -33,21 +33,17 @@ public class Chunk {
     private static Random r;
     private static int VBOTextureHandle;
     private static Texture texture;
-    
+
     /**
      * Constructor: Chunk 
      * Purpose: Initialize a chunk of Blocks and randomly add textures to each cube 
      * @param startX
      * @param startY
      * @param startZ 
-     * @param textureNum 1 is original, 2 is candy land
      */
-    public Chunk(int startX, int startY, int startZ, int textureNum) {
+    public Chunk(int startX, int startY, int startZ) {
         try {
-            if (textureNum == 1) 
-                texture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("terrain.png"));
-            if (textureNum == 2) 
-                texture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("terrain2.png"));
+            texture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("terrain.png"));
         }
         catch(Exception e) {
             System.out.print("ISSA ER-ROOOAR!!");
@@ -85,6 +81,7 @@ public class Chunk {
                     }
                     // Dirt or Stone in the middle
                     else if (y <= 17 + noise.getNoise(x, z) * 5) {
+                        // If above water, just dirt, no stone
                         if (y > 17) {
                             Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Dirt);
                         }
@@ -512,7 +509,4 @@ public class Chunk {
         */
         return new float[] {1, 1, 1};
     }
-    
-    public static int getChunkSize() { return CHUNK_SIZE; }
-    
 }

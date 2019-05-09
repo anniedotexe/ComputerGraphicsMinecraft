@@ -18,7 +18,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
 import java.nio.FloatBuffer;
-import java.util.Random;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Sys;
 
@@ -30,8 +29,7 @@ public class CameraController {
     private static float pitch;                 // rotation around X axis of camera
     private static Camera me;
     private static Chunk chunk;
-    private static Random r = new Random();
-        
+    
     /**
      * Constructor: CameraController
      * Purpose: Initialize variables of the camera and the chunk 
@@ -41,10 +39,10 @@ public class CameraController {
      */
     public CameraController(float x, float y, float z) {
         position = new Vector3f(x, y, z);
-        lPosition = new Vector3f(0f, 0f, 0f);
+        lPosition = new Vector3f(x, y, z);
         yaw = 90.0f;
         pitch = 20.0f;
-	chunk = new Chunk(-20, -135, -50, 2);      
+	chunk = new Chunk(-20, -135, -50);   
     }
     
     /**
@@ -83,12 +81,10 @@ public class CameraController {
         float zOffset = distance * (float)Math.cos(Math.toRadians(yaw));
         position.x -= xOffset;
         position.z += zOffset;
-        
-       
             
-        //FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        //lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
-        //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
         
     /**
@@ -101,10 +97,10 @@ public class CameraController {
         float zOffset= distance * (float) Math.cos(Math.toRadians(yaw));
         position.x += xOffset;
         position.z -= zOffset;
-        
-        //FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        //lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
-        //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
+
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
     /**
@@ -118,9 +114,9 @@ public class CameraController {
         position.x -= xOffset;
         position.z += zOffset;
         
-        //FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        //lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
-        //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
     /**
@@ -134,12 +130,11 @@ public class CameraController {
         position.x -= xOffset;
         position.z += zOffset;
         
-        //FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        //lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
-        //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
-        
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lPosition.x-=xOffset).put(lPosition.y).put(lPosition.z+=zOffset).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);   
     }
-
+    
     /**
      * Method: moveUp
      * Purpose: Move camera up
@@ -198,7 +193,6 @@ public class CameraController {
             time = Sys.getTime();
             lastTime = time;
             
-            
             dx = Mouse.getDX(); // distance in mouse movement from the last getDX() call.
             dy = Mouse.getDY(); // distance in mouse movement from the last getDY() call.
             
@@ -226,14 +220,9 @@ public class CameraController {
             
             // Change terrain of original texture
             if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
-                chunk = new Chunk(-20, -135, -50, 1);
+                chunk = new Chunk(-20, -135, -50);
             }
-            
-            // Change terrain of candy world texture
-            if (Keyboard.isKeyDown(Keyboard.KEY_T)) {
-                chunk = new Chunk(-20, -135, -50, 2);
-            }
-            
+                        
             glLoadIdentity();   // set the modelview matrix back to the identity 
             cam.lookThrough();  // look through the camera before you draw anything 
             glEnable(GL_DEPTH_TEST);

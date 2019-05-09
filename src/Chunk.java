@@ -5,7 +5,7 @@
  * Class:           CS 4450 - Computer Graphics
  *                  
  * Assignment:      Final Program 
- * Date:            25 April 2019 
+ * Date:            8 May 2019 
  *                  
  * Purpose:         Create chunks of Blocks and add textures from terrain.png 
  *                  
@@ -22,21 +22,18 @@ import org.newdawn.slick.util.ResourceLoader;
 
 public class Chunk {
     
-    static final int CHUNK_SIZE = 30;
+    static final int CHUNK_SIZE = 60;
     static final int CUBE_LENGTH = 2;
-    static final float persistanceMin = 0.07f;
-    static final float persistanceMax = 0.16f;
+    static Block[][][] Blocks;
     
-    private Random random = new Random();
-    private Block[][][] Blocks;
-    private int VBOVertexHandle;
-    private int VBOColorHandle;
-    private int StartX, StartY, StartZ;
-    private SimplexNoise noise;
-    private Random r;
-    private int VBOTextureHandle;
-    private Texture texture;
-    
+    private static int VBOVertexHandle;
+    private static int VBOColorHandle;
+    private static int StartX, StartY, StartZ;
+    private static SimplexNoise noise;
+    private static Random r;
+    private static int VBOTextureHandle;
+    private static Texture texture;
+
     /**
      * Constructor: Chunk 
      * Purpose: Initialize a chunk of Blocks and randomly add textures to each cube 
@@ -53,54 +50,33 @@ public class Chunk {
         }
         
         r = new Random();
-        Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
         
+        Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
         for (int x = 0; x < CHUNK_SIZE; x++) {
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 for (int z = 0; z < CHUNK_SIZE; z++) {
-                    if (y == 0) {
-                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Bedrock);
-                    }
-                    else if(y == CHUNK_SIZE - 1) {
-                        if (r.nextFloat() > 0.6f) {
-                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
-                        } else if (r.nextFloat() > 0.3f) {
-                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Water);
-                        } else if (r.nextFloat() >= 0.0f) {
-                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
-                        } else {
-                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Default);
-                        }
-                    }
-                    else {
-                        if (r.nextFloat() > 0.5f) {
-                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Stone);
-                        } else if (r.nextFloat() >= 0.0f) {
-                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Dirt);
-                        } else {
-                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Default);
-                        }
-                    }
+                    Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
+                    Blocks[x][y][z].setCoords((float)x,(float)y,(float)z);
+                    Blocks[x][y][z].setActive(false);
                 }
             }
         }
-        
         VBOColorHandle = glGenBuffers();
         VBOVertexHandle = glGenBuffers();
         VBOTextureHandle = glGenBuffers();
+        
         StartX = startX;
         StartY = startY;
         StartZ = startZ;
 
-        rebuildMesh(startX, startY, startZ);
+        rebuildMesh(startX, startY, startZ, false);
     }
-
 
     /**
      * Method: render
      * Purpose: Render the graphics
      */
-    public void render() {
+    public static void render() {
         glPushMatrix();
             glBindBuffer(GL_ARRAY_BUFFER, VBOVertexHandle);
             glVertexPointer(3, GL_FLOAT, 0, 0L);
@@ -120,76 +96,88 @@ public class Chunk {
      * @param startY
      * @param startZ 
      */
-    public void rebuildMesh(float startX, float startY, float startZ) {
-
-        r = new Random();
-        
-        int sandXmin = r.nextInt(15);
-        int sandXmax = r.nextInt(15)+15;
-        int sandZmin = r.nextInt(15);
-        int sandZmax = r.nextInt(15)+15;
-        
-        int waterXmin = r.nextInt(15);
-        int waterXmax = r.nextInt(15)+15;
-        int waterZmin = r.nextInt(15);
-        int waterZmax = r.nextInt(15)+15;
-        
-        float persistance = 0;
-        while (persistance < persistanceMin) {
-            persistance = (persistanceMax) * random.nextFloat();
-        }
-        int seed = (int) (50 * random.nextFloat());
-
-        noise = new SimplexNoise(CHUNK_SIZE, persistance, seed);
-
+    public static void rebuildMesh(float startX, float startY, float startZ, boolean kermit) {
         VBOColorHandle = glGenBuffers();
         VBOVertexHandle = glGenBuffers();
         VBOTextureHandle = glGenBuffers();
+        FloatBuffer VertexPositionData = BufferUtils.createFloatBuffer(
+                (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+        FloatBuffer VertexColorData = BufferUtils.createFloatBuffer(
+                (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+        FloatBuffer VertexTextureData = BufferUtils.createFloatBuffer(
+                (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
         
-        FloatBuffer VertexPositionData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
-        FloatBuffer VertexColorData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
-        FloatBuffer VertexTextureData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+        r = new Random();
+        noise = new SimplexNoise(40, .55f, r.nextInt());
         
-        for (float x = 0; x < CHUNK_SIZE; x++) {
-            for (float z = 0; z < CHUNK_SIZE; z++) {
-                for (float y = 0; y < CHUNK_SIZE; y++) {
-                    //generate height from simplex noise
-                    int height = (int) (startY + Math.abs((int) (CHUNK_SIZE * noise.getNoise((int) x, (int) z)))*CUBE_LENGTH);
-                    
-                    if (y >= height) {
-                        break;
+        Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+        
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for(int z = 0; z < CHUNK_SIZE; z++) {
+                for(int y = 0; y < CHUNK_SIZE; y++) {
+                    // Bottom Level
+                    if (y == 0) {
+                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Bedrock);
+                    } 
+                    // Water 
+                    else if (y >= 14 && y <= 16) {
+                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Water);
+                    } 
+                    // Sand 
+                    else if (y == 17) {
+                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Sand);
                     }
-                    //Generate Grass or Water or Sand at the top layer
-                    if(y == height -1) {
-                        if (r.nextFloat() > 0.5f) {
-                            //Generate random water area
-                            if (x>=waterXmin && x<=waterXmax && z >= waterZmin && z <= waterZmax) {
-                                Blocks[(int)x][(int)y][(int)z] = new Block(Block.BlockType.BlockType_Water);
+                    // Grass top level 
+                    else if (y >= 17 + noise.getNoise(x, z) * 5) {
+                        // If kermit is true, generate all kermit grass block
+                        if (kermit) {
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Surprise);
+                        }
+                        // Else 1/500 chance of a kermit grass block
+                        else {
+                            int randNum = r.nextInt(500);
+                            if (randNum == 21) {
+                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Surprise);
                             }
-                            //Generate random sand area
-                            else if (x>=sandXmin && x<=sandXmax && z >= sandZmin && z <= sandZmax) {
-                                Blocks[(int)x][(int)y][(int)z] = new Block(Block.BlockType.BlockType_Sand);
+                            else {
+                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
                             }
+                        }
+                    }
+                    // Dirt or Stone in the middle
+                    else if (y <= 17 + noise.getNoise(x, z) * 5) {
+                        // If above water, just dirt, no stone
+                        if (y > 17) {
+                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Dirt);
                         }
                         else {
-                            Blocks[(int)x][(int)y][(int)z] = new Block(Block.BlockType.BlockType_Grass);
+                            int ranNum = r.nextInt(2);
+                            switch(ranNum) {
+                                case 0:
+                                    Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Dirt);
+                                    break;
+                                case 1:
+                                   Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Stone);
+                                   break;
+                            }
                         }
+                    } 
+                    if (y >= 18 + noise.getNoise(x, z) * 5) {
+                        Blocks[x][y][z].setActive(false);
                     }
                     
-                    VertexPositionData.put(createCube(
-                            -(float) (startX + x * CUBE_LENGTH),
-                            (float) (y * CUBE_LENGTH + (int) (CHUNK_SIZE*.8)),
-                            -(float) (startZ + z * CUBE_LENGTH)));
-
-                    VertexColorData.put(createCubeVertexCol(getCubeColor(
-                            Blocks[(int) x][(int) y][(int) z])));
-
-                    VertexTextureData.put(createTexCube((float) 0,
-                            (float) 0, Blocks[(int) (x)][(int) (y)][(int) (z)]));
+                    // Place active blocks
+                    if (Blocks[(int)x][(int)y][(int)z].isActive()) {
+                        VertexPositionData.put(createCube((float) (startX + x * CUBE_LENGTH),
+                                (float) (startY + y * CUBE_LENGTH + (int) (CHUNK_SIZE * .8)),
+                                (float) (startZ + z * CUBE_LENGTH)));
+                        VertexColorData.put(createCubeVertexCol(getCubeColor(Blocks[(int) x][(int) y][(int) z])));
+                        VertexTextureData.put(createTexCube(0f, 0f, Blocks[(int) x][(int) y][(int) z]));
+                    }
                 }
             }
         }
-        
+
         VertexColorData.flip();
         VertexPositionData.flip();
         VertexTextureData.flip();
@@ -214,7 +202,7 @@ public class Chunk {
      * @param CubeColorArray
      * @return 
      */
-    private float[] createCubeVertexCol(float[] CubeColorArray) {
+    private static float[] createCubeVertexCol(float[] CubeColorArray) {
         float[] cubeColors = new float[CubeColorArray.length * 4 * 6];
         for(int i = 0; i < cubeColors.length; i++) {
             cubeColors[i] = CubeColorArray[i % CubeColorArray.length];
@@ -280,11 +268,11 @@ public class Chunk {
             case 0: // Grass 
                 return new float[]{
                     // BOTTOM QUAD(DOWN=+Y)
-                    x + offset * 3, y + offset * 10,
                     x + offset * 2, y + offset * 10,
+                    x + offset * 1, y + offset * 10,
+                    x + offset * 1, y + offset * 9,
                     x + offset * 2, y + offset * 9,
-                    x + offset * 3, y + offset * 9,
-                    // TOP!
+                    // TOP QUAD
                     x + offset * 3, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 0,
@@ -317,7 +305,7 @@ public class Chunk {
                     x + offset * 3, y + offset * 1,
                     x + offset * 3, y + offset * 2,
                     x + offset * 2, y + offset * 2,
-                    // TOP!
+                    // TOP QUAD
                     x + offset * 2, y + offset * 1,
                     x + offset * 3, y + offset * 1,
                     x + offset * 3, y + offset * 2,
@@ -350,7 +338,7 @@ public class Chunk {
                     x + offset * 16, y + offset * 12,
                     x + offset * 15, y + offset * 13,
                     x + offset * 16, y + offset * 13,
-                    // TOP!
+                    // TOP QUAD
                     x + offset * 15, y + offset * 12,
                     x + offset * 16, y + offset * 12,
                     x + offset * 15, y + offset * 13,
@@ -383,7 +371,7 @@ public class Chunk {
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 0,
                     x + offset * 3, y + offset * 0,
-                    // TOP!
+                    // TOP QUAD
                     x + offset * 3, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 0,
@@ -416,7 +404,7 @@ public class Chunk {
                     x + offset * 2, y + offset * 0,
                     x + offset * 2, y + offset * 1,
                     x + offset * 1, y + offset * 1,
-                    // TOP!
+                    // TOP QUAD
                     x + offset * 1, y + offset * 0,
                     x + offset * 2, y + offset * 0,
                     x + offset * 2, y + offset * 1,
@@ -449,7 +437,7 @@ public class Chunk {
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 2,
                     x + offset * 1, y + offset * 2,
-                    // TOP!
+                    // TOP QUAD
                     x + offset * 1, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 2,
@@ -475,6 +463,39 @@ public class Chunk {
                     x + offset * 2, y + offset * 2,
                     x + offset * 1, y + offset * 2
                 };
+            case 6: // Kermit 
+                return new float[]{
+                    // BOTTOM QUAD(DOWN=+Y)
+                    x + offset * 3, y + offset * 10,
+                    x + offset * 2, y + offset * 10,
+                    x + offset * 2, y + offset * 9,
+                    x + offset * 3, y + offset * 9,
+                    // TOP QUAD
+                    x + offset * 3, y + offset * 1,
+                    x + offset * 2, y + offset * 1,
+                    x + offset * 2, y + offset * 0,
+                    x + offset * 3, y + offset * 0,
+                    // FRONT QUAD
+                    x + offset * 3, y + offset * 0,
+                    x + offset * 4, y + offset * 0,
+                    x + offset * 4, y + offset * 1,
+                    x + offset * 3, y + offset * 1,
+                    // BACK QUAD
+                    x + offset * 4, y + offset * 1,
+                    x + offset * 3, y + offset * 1,
+                    x + offset * 3, y + offset * 0,
+                    x + offset * 4, y + offset * 0,
+                    // LEFT QUAD
+                    x + offset * 3, y + offset * 0,
+                    x + offset * 4, y + offset * 0,
+                    x + offset * 4, y + offset * 1,
+                    x + offset * 3, y + offset * 1,
+                    // RIGHT QUAD
+                    x + offset * 3, y + offset * 0,
+                    x + offset * 4, y + offset * 0,
+                    x + offset * 4, y + offset * 1,
+                    x + offset * 3, y + offset * 1
+                };
         }
     }
 
@@ -484,7 +505,7 @@ public class Chunk {
      * @param block
      * @return 
      */
-    private float[] getCubeColor(Block block) {
+    private static float[] getCubeColor(Block block) {
         /*
         switch(block.getID()) {
             case 1:
@@ -498,5 +519,4 @@ public class Chunk {
         */
         return new float[] {1, 1, 1};
     }
-    
 }

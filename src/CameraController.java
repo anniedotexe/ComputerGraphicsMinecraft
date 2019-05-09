@@ -29,6 +29,7 @@ public class CameraController {
     private static float pitch;                 // rotation around X axis of camera
     private static Camera me;
     private static Chunk chunk;
+    private static boolean kermit = false;
     
     /**
      * Constructor: CameraController
@@ -218,9 +219,16 @@ public class CameraController {
                 cam.moveDown(movementSpeed);
             }
             
-            // Change terrain of original texture
+            // Change terrain of original 
             if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
-                chunk = new Chunk(-20, -135, -50);
+                kermit = false;
+                chunk.rebuildMesh(-20, -135, -50, kermit);
+            }
+            
+            // Change terrain of all kermit grass top 
+            if (Keyboard.isKeyDown(Keyboard.KEY_K)) {
+                kermit = true;
+                chunk.rebuildMesh(-20, -135, -50, kermit);
             }
                         
             glLoadIdentity();   // set the modelview matrix back to the identity 

@@ -42,12 +42,74 @@ public class Chunk {
      * @param startZ 
      */
     public Chunk(int startX, int startY, int startZ) {
+                
         try {
             texture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("terrain.png"));
         }
         catch(Exception e) {
             System.out.print("ISSA ER-ROOOAR!!");
         }
+        
+        r = new Random();
+        
+        Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int y = 0; y < CHUNK_SIZE; y++) {
+                for (int z = 0; z < CHUNK_SIZE; z++) {
+                    Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
+                    Blocks[x][y][z].setCoords((float)x,(float)y,(float)z);
+                    Blocks[x][y][z].setActive(false);
+                }
+            }
+        }
+        VBOColorHandle = glGenBuffers();
+        VBOVertexHandle = glGenBuffers();
+        VBOTextureHandle = glGenBuffers();
+        
+        StartX = startX;
+        StartY = startY;
+        StartZ = startZ;
+
+        rebuildMesh(startX, startY, startZ, false);
+    }
+
+    
+    /**
+     * Method: render
+     * Purpose: Render the graphics
+     */
+    public static void render() {
+        glPushMatrix();
+            glBindBuffer(GL_ARRAY_BUFFER, VBOVertexHandle);
+            glVertexPointer(3, GL_FLOAT, 0, 0L);
+            glBindBuffer(GL_ARRAY_BUFFER, VBOColorHandle);
+            glColorPointer(3, GL_FLOAT, 0, 0L);
+            glBindBuffer(GL_ARRAY_BUFFER, VBOTextureHandle);
+            glBindTexture(GL_TEXTURE_2D, 1);
+            glTexCoordPointer(2, GL_FLOAT, 0, 0L);
+            glDrawArrays(GL_QUADS, 0, CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE*24);
+        glPopMatrix();
+    }
+    
+    /**
+     * Method: rebuildMesh 
+     * Purpose: Draw chunks of Blocks and generate terrain with SimplexNoise
+     * @param startX
+     * @param startY
+     * @param startZ 
+     */
+    public static void rebuildMesh(float startX, float startY, float startZ, boolean kermit) {
+
+        VBOColorHandle = glGenBuffers();
+        VBOVertexHandle = glGenBuffers();
+        VBOTextureHandle = glGenBuffers();
+        FloatBuffer VertexPositionData = BufferUtils.createFloatBuffer(
+                (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+        FloatBuffer VertexColorData = BufferUtils.createFloatBuffer(
+                (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+        FloatBuffer VertexTextureData = BufferUtils.createFloatBuffer(
+                (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+        
         
         r = new Random();
         noise = new SimplexNoise(40, .55f, r.nextInt());
@@ -71,12 +133,17 @@ public class Chunk {
                     }
                     // Grass top level with 1/500 chance of a surprise grass block
                     else if (y >= 17 + noise.getNoise(x, z) * 5) {
-                        int randNum = r.nextInt(500);
-                        if (randNum == 21) {
+                        if (kermit) {
                             Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Surprise);
                         }
                         else {
-                            Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
+                            int randNum = r.nextInt(500);
+                            if (randNum == 21) {
+                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Surprise);
+                            }
+                            else {
+                                Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
+                            }
                         }
                     }
                     // Dirt or Stone in the middle
@@ -106,53 +173,6 @@ public class Chunk {
                 }
             }
         }
-        
-        VBOColorHandle = glGenBuffers();
-        VBOVertexHandle = glGenBuffers();
-        VBOTextureHandle = glGenBuffers();
-        StartX = startX;
-        StartY = startY;
-        StartZ = startZ;
-
-        rebuildMesh(startX, startY, startZ);
-    }
-
-    
-    /**
-     * Method: render
-     * Purpose: Render the graphics
-     */
-    public static void render() {
-        glPushMatrix();
-            glBindBuffer(GL_ARRAY_BUFFER, VBOVertexHandle);
-            glVertexPointer(3, GL_FLOAT, 0, 0L);
-            glBindBuffer(GL_ARRAY_BUFFER, VBOColorHandle);
-            glColorPointer(3, GL_FLOAT, 0, 0L);
-            glBindBuffer(GL_ARRAY_BUFFER, VBOTextureHandle);
-            glBindTexture(GL_TEXTURE_2D, 1);
-            glTexCoordPointer(2, GL_FLOAT, 0, 0L);
-            glDrawArrays(GL_QUADS, 0, CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE*24);
-        glPopMatrix();
-    }
-    
-    /**
-     * Method: rebuildMesh 
-     * Purpose: Draw chunks of Blocks and generate terrain with SimplexNoise
-     * @param startX
-     * @param startY
-     * @param startZ 
-     */
-    public static void rebuildMesh(float startX, float startY, float startZ) {
-
-        VBOColorHandle = glGenBuffers();
-        VBOVertexHandle = glGenBuffers();
-        VBOTextureHandle = glGenBuffers();
-        FloatBuffer VertexPositionData = BufferUtils.createFloatBuffer(
-                (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
-        FloatBuffer VertexColorData = BufferUtils.createFloatBuffer(
-                (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
-        FloatBuffer VertexTextureData = BufferUtils.createFloatBuffer(
-                (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
         
         for (float x = 0; x < CHUNK_SIZE; x += 1) {
             for (float z = 0; z < CHUNK_SIZE; z += 1) {

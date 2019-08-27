@@ -1,9 +1,8 @@
-# ComputerGraphicsMinecraft
+# Computer Graphics Minecraft Project
 This is a Minecraft world that is created with Java and a lightweight graphics library called OpenGL. <br>
 
 ## Blocks
-There are 6 types of blocks that are randomly generated.
-
+There are 6 types of blocks that are randomly generated:
   * Grass
   * Sand
   * Water
@@ -12,10 +11,12 @@ There are 6 types of blocks that are randomly generated.
   * Bedrock
 
 ### Terrain
-The top layer must be either grass sand, or water. <br>
+The top layer must be either grass, sand, or water. <br>
 The very bottom layer must be bedrock. <br>
 
-The varying height levels of the terrain is created by a noise generator that randomizes the heights based on the user-entered amount of persistance (amount of variation).
+The varying height levels of the terrain is created by a noise generator that randomizes the heights based on persistance (amount of variation). <br>
+
+Our implementation makes sure that bodies of water are generated being surrounded by sand, instead of having randomly placed grass, sand, and water blocks on the top level of the terrain.
 
 ## Camera
 The camera is the user's point of view of the world. The camera position is stored in a 3D vector. <br>

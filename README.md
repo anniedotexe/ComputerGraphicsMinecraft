@@ -12,7 +12,7 @@ There are 6 types of blocks that are randomly generated.
   * Bedrock
 
 ### Terrain
-The top layer must be either grass or sand. <br>
+The top layer must be either grass sand, or water. <br>
 The very bottom layer must be bedrock. <br>
 
 The varying height levels of the terrain is created by a noise generator that randomizes the heights based on the user-entered amount of persistance (amount of variation).
